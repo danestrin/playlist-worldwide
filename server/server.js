@@ -19,20 +19,46 @@ var authOptions = {
   },
   json: true
 };
-
 requestSpotifyToken();
 
 // ROUTES
 
 // Categories
 server.get('/api/categories', (req, res) => {
-  res.json({ token: token });
-  // TODO
+  var options = {
+    url: 'https://api.spotify.com/v1/browse/categories?country=' + req.query.country,
+    headers: {
+      'Authorization': 'Bearer ' + token
+    },
+    json: true
+  };
+
+  request.get(options, (error, response, body) => {
+    if (!error && response.statusCode === 200) {
+      res.json(Object.assign({}, ...(body.categories.items.map(item => ({ [item.id]: item.name})))));
+    } else {
+      // TODO: return error code response
+    }
+  });
 });
 
 // Playlists
 server.get('/api/playlists', (req, res) => {
-  // TODO
+  var options = {
+    url: 'https://api.spotify.com/v1/browse/categories/' + req.query.category + '/playlists?' + 'country=' + req.query.country  + '&limit=' + req.query.limit,
+    headers: {
+      'Authorization': 'Bearer ' + token
+    },
+    json: true
+  };
+
+  request.get(options, (error, response, body) => {
+    if (!error && response.statusCodeCode === 200) {
+      // TODO
+    } else {
+      // TODO
+    }
+  });
 })
 
 server.listen(PORT, () => {
