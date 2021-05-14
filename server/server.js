@@ -35,9 +35,11 @@ server.get('/api/categories', (req, res) => {
 
   request.get(options, (error, response, body) => {
     if (!error && response.statusCode === 200) {
-      res.json(Object.assign({}, ...(body.categories.items.map(item => ({ [item.id]: item.name})))));
+      res.json(Object.assign({}, ...(body.categories.items.map(item => ({ 
+        [item.id]: item.name
+      })))));
     } else {
-      // TODO: return error code response
+      res.json(body);
     }
   });
 });
@@ -51,12 +53,17 @@ server.get('/api/playlists', (req, res) => {
     },
     json: true
   };
-
   request.get(options, (error, response, body) => {
-    if (!error && response.statusCodeCode === 200) {
-      // TODO
+    if (!error && response.statusCode=== 200) {
+      playlistData = body.playlists.items.map(item => ({
+          name: item.name,
+          description: parseDescription(item.description),
+          url: item.external_urls.spotify,
+          img: item.images[0].url
+      }));
+      res.json(playlistData);
     } else {
-      // TODO
+      res.json(body);
     }
   });
 })
@@ -64,6 +71,8 @@ server.get('/api/playlists', (req, res) => {
 server.listen(PORT, () => {
 	console.log("Server listening on " + PORT);
 });
+
+// HELPERS
 
 function requestSpotifyToken() {
   request.post(authOptions, function(error, response, body) {
@@ -73,4 +82,9 @@ function requestSpotifyToken() {
       // TODO: handle retry/handling
     }
   });
+}
+
+function parseDescription(desc) {
+  // some spotify descriptions have an embed link, need to check and parse out
+  return desc.replace( /(<([^>]+)>)/ig, '');
 }
