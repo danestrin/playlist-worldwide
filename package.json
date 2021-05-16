@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/danestrin/playlist-worldwide#readme",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^9.0.2",
     "express": "^4.17.1",
     "request": "^2.88.2"
