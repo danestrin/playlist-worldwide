@@ -8,13 +8,15 @@ class PlaylistDisplay extends Component {
 
     render() {
         return(
-            <Card>
+            <Card className="PlaylistContent">
                 <Card.Img variant="top" src={this.props.img} />
                 <Card.Body>
                     <Card.Title>{this.props.name}</Card.Title>
                     <Card.Text>{this.props.description}</Card.Text>
-                    <Button variant="default" href={this.props.url}>Open in Spotify</Button>
                 </Card.Body>
+                <Card.Footer style={{background: 'white', border: 'white'}}>
+                    <Button variant="default" style={{color: 'black', background: '#66ccff'}} href={this.props.url}>Open in Spotify</Button>
+                </Card.Footer>
             </Card>
         )
     }

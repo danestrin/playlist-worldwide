@@ -1,12 +1,12 @@
 import { Component } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import { Form, Button, Container, Col, Row, CardDeck } from 'react-bootstrap';
 import PlaylistDisplay from './PlaylistDisplay';
 
 const request = require('request');
 const countries = require("i18n-iso-countries");
 countries.registerLocale(require("i18n-iso-countries/langs/en.json"));
 
-const limit = 1;    // playlists to return
+const limit = 4;
 
 class PlaylistForm extends Component {
     constructor(props) {
@@ -16,17 +16,17 @@ class PlaylistForm extends Component {
             categoriesMap: {},
             country: "",
             category: "",
-            playlist: {}
+            playlists: []
         }
     }
 
     render() {
         return(
             <div>
-                <Form>
-                    <Form.Group controlId="countrySelect" value={this.state.country} onChange={(e) => this.fetchMusicCategoriesForCountry(e)}>
-                        <Form.Control as="select" defaultValue="">
-                            <option value="">Select a country...</option>
+                <Form className="PlaylistForm">
+                    <Form.Group className="Select" controlId="countrySelect" value={this.state.country} onChange={(e) => this.fetchMusicCategoriesForCountry(e)}>
+                        <Form.Control className="Select" as="select" defaultValue="">
+                            <option disabled value="">Select a country...</option>
                             {
                                 Object.keys(this.state.countriesMap).map((k, i) => {
                                     return(<option value={k} key={k}>{this.state.countriesMap[k]}</option>)
@@ -34,22 +34,36 @@ class PlaylistForm extends Component {
                             }
                         </Form.Control>
                     </Form.Group>
-                    <Form.Group controlId="categorySelect" onChange={(e) => this.updateCategory(e)}>
-                        <Form.Control as="select">
-                            {
-                                Object.keys(this.state.categoriesMap).map((k, i) => {
-                                    return (<option value={k} key={k}>{this.state.categoriesMap[k]}</option>)
-                                })
-                            }
-                        </Form.Control>
-                    </Form.Group>
-                    <Form.Group>
-                        <Button variant="default" size="lg" onClick={(e) => this.fetchPlaylists(e)}>Find playlists</Button>
-                    </Form.Group>
+                    {
+                        <div className={((this.isCountrySelected() && this.isCategorySelected()) ? "FadeIn" : "FadeOut")}>
+                            <Form.Group className="Select" controlId="categorySelect" onChange={(e) => this.updateCategory(e)}>
+                                <Form.Control className="Select" as="select">
+                                    {
+                                        Object.keys(this.state.categoriesMap).map((k, i) => {
+                                            return (<option value={k} key={k}>{this.state.categoriesMap[k]}</option>)
+                                        })
+                                    }
+                            </Form.Control>
+                            </Form.Group>
+                            <Form.Group className="ButtonWrapper">
+                                <Button variant="default" style={{color: 'black', background: '#66ccff'}} size="lg" onClick={(e) => this.fetchPlaylists(e)}>Find playlists</Button>
+                            </Form.Group>
+                        </div>
+                    }
                 </Form>
-                <div>
-                    <PlaylistDisplay name={this.state.playlist.name} description={this.state.playlist.description} url={this.state.playlist.url} img={this.state.playlist.img}/>
-                </div>
+                    <Container className={(this.arePlaylistsShowing() ? "PlaylistCards FadeIn" : "FadeOut")}>
+                        <Row>
+                        {
+                            this.state.playlists.map((playlist) => {
+                                return (
+                                    <Col className="CardCol">
+                                        <PlaylistDisplay key={playlist.url} name={playlist.name} description={playlist.description} url={playlist.url} img={playlist.img}/>
+                                    </Col>
+                                )
+                            })
+                        }
+                        </Row>
+                    </Container>
             </div>
         );
     }
@@ -68,17 +82,16 @@ class PlaylistForm extends Component {
                     countriesMap: prevState.countriesMap,
                     categoriesMap: data.categories,
                     country: event.target.value,
-                    category: data[Object.keys(data.categories)[0]],    // bit hacky, first option gets selected first in the UI
-                    playlist: prevState.playlist
+                    category: Object.keys(data.categories)[0],    // bit hacky, first option gets selected first in the UI
+                    playlists: prevState.playlists
                 }));
             } else {
-                console.log(response);
                 this.setState(prevState => ({
                     countriesMap: prevState.countriesMap,
                     categoriesMap: {},
                     country: event.target.value,
                     category: "",
-                    playlist: {}
+                    playlists: []
                 }))
                 // TODO: error alert/badge
             }
@@ -91,7 +104,7 @@ class PlaylistForm extends Component {
             categoriesMap: prevState.categoriesMap,
             country: prevState.country,
             category: event.target.value,
-            playlist: prevState.playlist
+            playlists: prevState.playlists
         }));
     }
 
@@ -105,23 +118,38 @@ class PlaylistForm extends Component {
         request.get(options, (error, response, body) => {
             if (!error && response.statusCode === 200) {
                 var data = JSON.parse(body);
-                var playlist = data[0]
-                this.setState(prevState => ({
-                    countriesMap: prevState.countriesMap,
-                    categoriesMap: prevState.categoriesMap,
-                    country: prevState.country,
-                    category: event.target.value,
-                    playlist: {
+                var playlists = data.map((playlist) => {
+                    return {
                         name: playlist.name,
                         description: playlist.description,
                         url: playlist.url,
                         img: playlist.img
-                    }
+                    };
+                });
+
+                this.setState(prevState => ({
+                    countriesMap: prevState.countriesMap,
+                    categoriesMap: prevState.categoriesMap,
+                    country: prevState.country,
+                    category: prevState.category,
+                    playlists: playlists
                 }));
             } else {
                 // TODO: error badge/message
             }
         });
+    }
+
+    isCountrySelected() {
+        return this.state.country !== "";
+    }
+
+    isCategorySelected() {
+        return this.state.category !== "";
+    }
+
+    arePlaylistsShowing() {
+        return this.state.playlists.length !== 0;
     }
 }
 

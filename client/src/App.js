@@ -1,8 +1,7 @@
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import PlaylistForm from './PlaylistForm';
 import { Component } from 'react';
-
-const request = require('request');
 
 class App extends Component {
   constructor(props) {
@@ -10,13 +9,13 @@ class App extends Component {
   }
 
   async componentDidMount() {
-    // TODO
+    document.body.style = 'background: #666699'
   }
 
   render() {
     return (
       <div>
-        <div>
+        <div className="Title">
           <h1>Playlist Worldwide</h1>
           <h3>Search for featured playlists around the world!</h3>
         </div>
