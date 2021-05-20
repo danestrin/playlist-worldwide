@@ -20,6 +20,7 @@ var authOptions = {
   },
   json: true
 };
+
 requestSpotifyToken();
 
 // ROUTES
@@ -43,9 +44,16 @@ server.get('/api/categories', cors(), (req, res) => {
     } else {
       var statusCode = body.error.status;
       var message = body.error.message;
-      res.status(statusCode).send({
-        message: message
-      });
+      
+      if (message === "Unlaunched country") {
+        res.status(404).send({
+          message: message
+        });
+      } else {
+        res.status(statusCode).send({
+          message: message
+        });
+      }
     }
   });
 });
@@ -88,6 +96,9 @@ function requestSpotifyToken() {
   request.post(authOptions, function(error, response, body) {
     if (!error && response.statusCode === 200) {
       token = body.access_token;
+
+      // Need to refresh access token once it expires
+      setInterval(requestSpotifyToken, body.expires_in * 1000);
     } else {
       // TODO: handle retry/handling
     }

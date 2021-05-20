@@ -28,6 +28,10 @@ h1 {
   font-family: 'Noto Sans JP', sans-serif;
 }
 
+.Hidden {
+  opacity: 0;
+}
+
 .FadeOut {
   opacity: 0;
   transition: opacity 0.5s;
@@ -51,6 +55,11 @@ h1 {
 
 .CardCol {
   display: flex;
+}
+
+.Alert {
+  margin-top: 25px;
+  font-size: smaller;
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@900&display=swap');

@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { Form, Button, Container, Col, Row, CardDeck } from 'react-bootstrap';
+import { Form, Button, Container, Col, Row, Alert, } from 'react-bootstrap';
 import PlaylistDisplay from './PlaylistDisplay';
 
 const request = require('request');
@@ -7,6 +7,13 @@ const countries = require("i18n-iso-countries");
 countries.registerLocale(require("i18n-iso-countries/langs/en.json"));
 
 const limit = 4;
+
+const errors = {
+    400: "Looks like an issue on our end.",
+    401: "Had trouble reaching Spotify data - please try again.",
+    404: "Couldn't find Spotify data for the selected country - please try another one.",
+    unknown: "Not sure what went wrong."
+}
 
 class PlaylistForm extends Component {
     constructor(props) {
@@ -16,7 +23,8 @@ class PlaylistForm extends Component {
             categoriesMap: {},
             country: "",
             category: "",
-            playlists: []
+            playlists: [],
+            error: ""
         }
     }
 
@@ -33,9 +41,16 @@ class PlaylistForm extends Component {
                                 })
                             }
                         </Form.Control>
+                        {
+                            this.state.error !== "" &&
+                            <Alert className= "Alert" key="countryAlert" variant="danger">
+                                <Alert.Heading style={{ fontSize: "large" }} >Sorry about that!</Alert.Heading>
+                                <p>{this.state.error}</p>
+                            </Alert>
+                        }
                     </Form.Group>
                     {
-                        <div className={((this.isCountrySelected() && this.isCategorySelected()) ? "FadeIn" : "FadeOut")}>
+                        <div className={((this.isCountrySelected() && this.isCategorySelected()) ? "FadeIn" : "Hidden")}>
                             <Form.Group className="Select" controlId="categorySelect" onChange={(e) => this.updateCategory(e)}>
                                 <Form.Control className="Select" as="select">
                                     {
@@ -51,7 +66,7 @@ class PlaylistForm extends Component {
                         </div>
                     }
                 </Form>
-                    <Container className={(this.arePlaylistsShowing() ? "PlaylistCards FadeIn" : "FadeOut")}>
+                    <Container className={(this.arePlaylistsShowing() ? "PlaylistCards FadeIn" : "Hidden")}>
                         <Row>
                         {
                             this.state.playlists.map((playlist) => {
@@ -83,7 +98,8 @@ class PlaylistForm extends Component {
                     categoriesMap: data.categories,
                     country: event.target.value,
                     category: Object.keys(data.categories)[0],    // bit hacky, first option gets selected first in the UI
-                    playlists: prevState.playlists
+                    playlists: prevState.playlists,
+                    error: ""
                 }));
             } else {
                 this.setState(prevState => ({
@@ -91,9 +107,9 @@ class PlaylistForm extends Component {
                     categoriesMap: {},
                     country: event.target.value,
                     category: "",
-                    playlists: []
+                    playlists: [],
+                    error: errors[response.statusCode]
                 }))
-                // TODO: error alert/badge
             }
         });
     }
@@ -104,7 +120,8 @@ class PlaylistForm extends Component {
             categoriesMap: prevState.categoriesMap,
             country: prevState.country,
             category: event.target.value,
-            playlists: prevState.playlists
+            playlists: prevState.playlists,
+            error: ""
         }));
     }
 
@@ -132,7 +149,8 @@ class PlaylistForm extends Component {
                     categoriesMap: prevState.categoriesMap,
                     country: prevState.country,
                     category: prevState.category,
-                    playlists: playlists
+                    playlists: playlists,
+                    error: ""
                 }));
             } else {
                 // TODO: error badge/message
