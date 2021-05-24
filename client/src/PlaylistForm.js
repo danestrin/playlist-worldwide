@@ -43,7 +43,7 @@ class PlaylistForm extends Component {
                         </Form.Control>
                         {
                             this.state.error !== "" &&
-                            <Alert className= "Alert" key="countryAlert" variant="danger">
+                            <Alert className= "Alert" key="error" variant="danger">
                                 <Alert.Heading style={{ fontSize: "large" }} >Sorry about that!</Alert.Heading>
                                 <p>{this.state.error}</p>
                             </Alert>
@@ -66,19 +66,19 @@ class PlaylistForm extends Component {
                         </div>
                     }
                 </Form>
-                    <Container className={(this.arePlaylistsShowing() ? "PlaylistCards FadeIn" : "Hidden")}>
-                        <Row>
-                        {
-                            this.state.playlists.map((playlist) => {
-                                return (
-                                    <Col className="CardCol">
-                                        <PlaylistDisplay key={playlist.url} name={playlist.name} description={playlist.description} url={playlist.url} img={playlist.img}/>
-                                    </Col>
-                                )
-                            })
-                        }
-                        </Row>
-                    </Container>
+                <Container className={(this.arePlaylistsShowing() ? "PlaylistCards FadeIn" : "Hidden")}>
+                    <Row>
+                    {
+                        this.state.playlists.map((playlist) => {
+                            return (
+                                <Col className="CardCol">
+                                    <PlaylistDisplay key={playlist.url} name={playlist.name} description={playlist.description} url={playlist.url} img={playlist.img}/>
+                                </Col>
+                            )
+                        })
+                    }
+                    </Row>
+                </Container>
             </div>
         );
     }
