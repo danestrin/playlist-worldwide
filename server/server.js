@@ -4,10 +4,13 @@ const request = require("request");
 const cors = require("cors");
 const PORT = process.env.PORT || 3001;
 const server = express();
+const retryInterval = 1800 * 1000;
+
+var retry = null;
 
 // SPOTIFY AUTHENTICATION
-var client_id = process.env.CLIENT_ID;
-var client_secret = process.env.SECRET;
+const client_id = process.env.CLIENT_ID;
+const client_secret = process.env.SECRET;
 var token = ""
 
 var authOptions = {
@@ -98,9 +101,15 @@ function requestSpotifyToken() {
       token = body.access_token;
 
       // Need to refresh access token once it expires
+      console.log("Retrieved Spotify token, refreshing in " + body.expires_in + " s");
       setInterval(requestSpotifyToken, body.expires_in * 1000);
+
+      if (retry !== null) {
+        clearInterval(retry);
+      }
     } else {
-      // TODO: handle retry/handling
+      console.log("Failed to retrieve Spotify token, retrying in " + retryInterval.toString() + " ms");
+      retry = setInterval(requestSpotifyToken, retryInterval);
     }
   });
 }
