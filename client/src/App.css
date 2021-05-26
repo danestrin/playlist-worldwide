@@ -58,6 +58,7 @@ h1 {
 .PlaylistContent {
   margin-top: 25px;
   margin-bottom: 25px;
+  max-width: 250px;
 }
 
 .PlaylistCards {
@@ -72,7 +73,6 @@ h1 {
 }
 
 .Alert {
-  margin-top: 25px;
   font-size: smaller;
 }
 

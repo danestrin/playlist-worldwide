@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { Button, Card, Image } from 'react-bootstrap';
+import { Button, Card } from 'react-bootstrap';
 
 class PlaylistDisplay extends Component {
     constructor(props) {

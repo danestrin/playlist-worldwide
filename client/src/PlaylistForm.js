@@ -6,13 +6,14 @@ const request = require('request');
 const countries = require("i18n-iso-countries");
 countries.registerLocale(require("i18n-iso-countries/langs/en.json"));
 
-const limit = 4;
+const limit = 12;
 
 const errors = {
-    400: "Looks like an issue on our end.",
-    401: "Had trouble reaching Spotify data - please try again.",
-    404: "Couldn't find Spotify data for the selected country - please try another one.",
-    unknown: "Not sure what went wrong."
+    "400": "Looks like an issue on our end.",
+    "401": "Had trouble reaching Spotify data - please try again.",
+    "404-country": "Couldn't find Spotify data for the selected country - please try another one.",
+    "404-category": "Couldn't find Spotify data for the selected category - please try another one.",
+    "unknown": "Not sure what went wrong."
 }
 
 class PlaylistForm extends Component {
@@ -32,6 +33,13 @@ class PlaylistForm extends Component {
         return(
             <div>
                 <Form className="PlaylistForm">
+                    {
+                        this.state.error !== "" &&
+                        <Alert className= "Alert" key="error" variant="danger">
+                            <Alert.Heading style={{ fontSize: "large" }} >Sorry about that!</Alert.Heading>
+                            <p>{this.state.error}</p>
+                        </Alert>
+                    }
                     <Form.Group className="Select" controlId="countrySelect" value={this.state.country} onChange={(e) => this.fetchMusicCategoriesForCountry(e)}>
                         <Form.Control className="Select" as="select" defaultValue="">
                             <option disabled value="">Select a country...</option>
@@ -41,18 +49,11 @@ class PlaylistForm extends Component {
                                 })
                             }
                         </Form.Control>
-                        {
-                            this.state.error !== "" &&
-                            <Alert className= "Alert" key="error" variant="danger">
-                                <Alert.Heading style={{ fontSize: "large" }} >Sorry about that!</Alert.Heading>
-                                <p>{this.state.error}</p>
-                            </Alert>
-                        }
                     </Form.Group>
                     {
                         <div className={((this.isCountrySelected() && this.isCategorySelected()) ? "FadeIn" : "Hidden")}>
                             <Form.Group className="Select" controlId="categorySelect" onChange={(e) => this.updateCategory(e)}>
-                                <Form.Control className="Select" as="select">
+                                <Form.Control className="Select" as="select" value={this.state.category}>
                                     {
                                         Object.keys(this.state.categoriesMap).map((k, i) => {
                                             return (<option value={k} key={k}>{this.state.categoriesMap[k]}</option>)
@@ -102,13 +103,14 @@ class PlaylistForm extends Component {
                     error: ""
                 }));
             } else {
+                var errorKey = response.statusCode === 404 ? "404-country" : response.statusCode.toString();
                 this.setState(prevState => ({
                     countriesMap: prevState.countriesMap,
                     categoriesMap: {},
                     country: event.target.value,
                     category: "",
                     playlists: [],
-                    error: errors[response.statusCode]
+                    error: (errorKey in errors) ? errors[errorKey] : errors["unknown"]
                 }))
             }
         });
@@ -153,7 +155,15 @@ class PlaylistForm extends Component {
                     error: ""
                 }));
             } else {
-                // TODO: error badge/message
+                var errorKey = response.statusCode === 404 ? "404-category" : response.statusCode.toString();
+                this.setState(prevState => ({
+                    countriesMap: prevState.countriesMap,
+                    categoriesMap: prevState.categoriesMap,
+                    country: prevState.country,
+                    category: prevState.category,
+                    playlists: [],
+                    error: (errorKey in errors) ? errors[errorKey] : errors["unknown"]
+                }))
             }
         });
     }
