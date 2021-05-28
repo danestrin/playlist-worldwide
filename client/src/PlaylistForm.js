@@ -75,7 +75,7 @@ class PlaylistForm extends Component {
                     {
                         this.state.playlists.map((playlist) => {
                             return (
-                                <Col className="CardCol">
+                                <Col key={playlist.url} className="CardCol">
                                     <PlaylistDisplay key={playlist.url} name={playlist.name} description={playlist.description} url={playlist.url} img={playlist.img}/>
                                 </Col>
                             )
