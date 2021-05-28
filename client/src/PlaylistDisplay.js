@@ -2,10 +2,6 @@ import { Component } from 'react';
 import { Button, Card } from 'react-bootstrap';
 
 class PlaylistDisplay extends Component {
-    constructor(props) {
-        super(props);
-    }
-
     render() {
         return(
             <Card className="PlaylistContent">

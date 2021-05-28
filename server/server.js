@@ -47,6 +47,11 @@ server.get('/api/categories', cors(), (req, res) => {
     } else {
       var statusCode = body.error.status;
       var message = body.error.message;
+
+      if (statusCode === 401) {
+        // in case of expired/malformed token, request a new one so that the user can try again
+        requestSpotifyToken();
+      }
       
       if (message === "Unlaunched country") {
         res.status(404).send({
@@ -71,7 +76,7 @@ server.get('/api/playlists', cors(), (req, res) => {
     json: true
   };
   request.get(options, (error, response, body) => {
-    if (!error && response.statusCode=== 200) {
+    if (!error && response.statusCode === 200) {
       playlistData = body.playlists.items.map(item => ({
           name: item.name,
           description: parseDescription(item.description),
@@ -82,6 +87,11 @@ server.get('/api/playlists', cors(), (req, res) => {
     } else {
       var statusCode = body.error.status;
       var message = body.error.message;
+
+      if (statusCode === 401) {
+        requestSpotifyToken();
+      }
+
       res.status(statusCode).send({
         message: message
       });

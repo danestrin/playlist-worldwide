@@ -6,6 +6,9 @@ const request = require('request');
 const countries = require("i18n-iso-countries");
 countries.registerLocale(require("i18n-iso-countries/langs/en.json"));
 
+const host = process.env.REACT_APP_API_HOST
+const port = process.env.REACT_APP_API_PORT
+
 const limit = 12;
 
 const errors = {
@@ -52,8 +55,8 @@ class PlaylistForm extends Component {
                     </Form.Group>
                     {
                         <div className={((this.isCountrySelected() && this.isCategorySelected()) ? "FadeIn" : "Hidden")}>
-                            <Form.Group className="Select" controlId="categorySelect" onChange={(e) => this.updateCategory(e)}>
-                                <Form.Control className="Select" as="select" value={this.state.category}>
+                            <Form.Group className="Select" controlId="categorySelect" value={this.state.category} onChange={(e) => this.updateCategory(e)}>
+                                <Form.Control className="Select" as="select" defaultValue={this.state.category}>
                                     {
                                         Object.keys(this.state.categoriesMap).map((k, i) => {
                                             return (<option value={k} key={k}>{this.state.categoriesMap[k]}</option>)
@@ -85,8 +88,6 @@ class PlaylistForm extends Component {
     }
 
     fetchMusicCategoriesForCountry(event) {
-        var host = process.env.REACT_APP_DEV_API_HOST
-        var port = process.env.REACT_APP_DEV_API_PORT
         var options = {
             url: host + ":" + port + "/api/categories?country=" + event.target.value
         };
@@ -98,7 +99,7 @@ class PlaylistForm extends Component {
                     countriesMap: prevState.countriesMap,
                     categoriesMap: data.categories,
                     country: event.target.value,
-                    category: Object.keys(data.categories)[0],    // bit hacky, first option gets selected first in the UI
+                    category: Object.keys(data.categories)[0],
                     playlists: prevState.playlists,
                     error: ""
                 }));
@@ -128,8 +129,6 @@ class PlaylistForm extends Component {
     }
 
     fetchPlaylists(event) {
-        var host = process.env.REACT_APP_DEV_API_HOST
-        var port = process.env.REACT_APP_DEV_API_PORT
         var options = {
             url: host + ":" + port + "/api/playlists?category=" + this.state.category + "&country=" + this.state.country + "&limit=" + limit
         };
