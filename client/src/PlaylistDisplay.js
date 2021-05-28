@@ -7,11 +7,11 @@ class PlaylistDisplay extends Component {
             <Card className="PlaylistContent">
                 <Card.Img variant="top" src={this.props.img} />
                 <Card.Body>
-                    <Card.Title className="BoldText">{this.props.name}</Card.Title>
+                    <Card.Title><b>{this.props.name}</b></Card.Title>
                     <Card.Text>{this.props.description}</Card.Text>
                 </Card.Body>
                 <Card.Footer style={{background: 'white', border: 'white'}}>
-                    <Button className="BoldText" variant="default" style={{color: 'black', background: '#66ccff'}} href={this.props.url}>Open in Spotify</Button>
+                    <Button className="BoldText" variant="default" style={{color: 'black', background: '#66ccff'}} href={this.props.url}><b>Open in Spotify</b></Button>
                 </Card.Footer>
             </Card>
         )

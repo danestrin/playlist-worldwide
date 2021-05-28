@@ -38,12 +38,12 @@ class PlaylistForm extends Component {
                 <Form className="PlaylistForm">
                     {
                         this.state.error !== "" &&
-                        <Alert className= "Alert" key="error" variant="danger">
-                            <Alert.Heading style={{ fontSize: "large" }} >Sorry about that!</Alert.Heading>
-                            <p>{this.state.error}</p>
+                        <Alert key="error" variant="danger"> 
+                            <Alert.Heading style={{ fontFamily: 'Noto Sans JP' }}>Sorry about that!</Alert.Heading>
+                            <p style={{ fontFamily: 'Noto Sans' }}>{this.state.error}</p>
                         </Alert>
                     }
-                    <Form.Group className="Select" controlId="countrySelect" value={this.state.country} onChange={(e) => this.fetchMusicCategoriesForCountry(e)}>
+                    <Form.Group className="Select" value={this.state.country} onChange={(e) => this.fetchMusicCategoriesForCountry(e)}>
                         <Form.Control className="Select" as="select" defaultValue="">
                             <option disabled value="">Select a country...</option>
                             {
@@ -55,8 +55,8 @@ class PlaylistForm extends Component {
                     </Form.Group>
                     {
                         <div className={((this.isCountrySelected() && this.isCategorySelected()) ? "FadeIn" : "Hidden")}>
-                            <Form.Group className="Select" controlId="categorySelect" value={this.state.category} onChange={(e) => this.updateCategory(e)}>
-                                <Form.Control className="Select" as="select" defaultValue={this.state.category}>
+                            <Form.Group className="Select">
+                                <Form.Control className="Select" as="select" value={this.state.category} onChange={(e) => this.updateCategory(e)}>
                                     {
                                         Object.keys(this.state.categoriesMap).map((k, i) => {
                                             return (<option value={k} key={k}>{this.state.categoriesMap[k]}</option>)

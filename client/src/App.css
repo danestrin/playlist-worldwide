@@ -1,3 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans&family=Noto+Sans+JP:wght@900&family=Noto+Sans+KR:wght@900&family=Noto+Sans+SC:wght@900&family=Noto+Sans+TC:wght@900&display=swap');
+/* Note (hacky workaround): font-weight isn't working for Google imported fonts, so use Noto Sans JP for super bold, and Noto Sans for regular */
+/* Some countries (e.g. South Korea) have categories in their own language, so import as many versions as possible and use as fallback just in case */
+
 html, body, #root, .App {
   height: 100%;
   background-color: #666699;
@@ -11,9 +15,8 @@ html, body, #root, .App {
 
 .Title {
   text-align: center;
-  font-family: 'Tahoma Black', 'sans-serif';
-  font-weight: 900;
   color: #66ccff;
+  font-family: 'Noto Sans JP', sans-serif;
   padding: 25px;
 }
 
@@ -24,8 +27,8 @@ h1 {
 .PlaylistForm {
   padding-top: 0px;
   padding-bottom: 0px;
-  font-family: 'Tahoma Black', sans-serif;
-  width: 250px;
+  font-family: 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans SC', 'Noto Sans TC', sans-serif;
+  width: 300px;
   margin: auto;
 }
 
@@ -37,7 +40,7 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Tahoma Black', sans-serif;
+  font-family: 'Noto Sans JP', sans-serif;
 }
 
 .Hidden {
@@ -62,7 +65,7 @@ h1 {
 }
 
 .PlaylistCards {
-  font-family: 'Tahoma', sans-serif;
+  font-family: 'Noto Sans', sans-serif;
   text-align: center;
   padding-bottom: 25px;
 }
@@ -72,21 +75,18 @@ h1 {
   min-width: 250px;
 }
 
-.Alert {
-  font-size: smaller;
-}
-
 .BoldText {
-  font-family: 'Tahoma Black', sans-serif;
+  font-family: 'Noto Sans JP', sans-serif;
 }
 
 .Footer {
   flex-shrink: 0;
-  font-family: 'Tahoma Black', sans-serif;
+  font-family: 'Noto Sans JP', sans-serif;
   text-align: right;
   padding-right: 10px;
 }
 
 .FooterLink {
   color: #66ccff;
+  text-decoration: none !important;
 }
