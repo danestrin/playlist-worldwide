@@ -16,7 +16,8 @@ const errors = {
     "401": "Had trouble reaching Spotify data - please try again.",
     "404-country": "Couldn't find Spotify data for the selected country - please try another one.",
     "404-category": "Couldn't find Spotify data for the selected category - please try another one.",
-    "unknown": "Not sure what went wrong."
+    "unknown": "Not sure what went wrong.",
+    "server-down": "Could not connect to Playlist Worldwide server."
 }
 
 class PlaylistForm extends Component {
@@ -104,15 +105,26 @@ class PlaylistForm extends Component {
                     error: ""
                 }));
             } else {
-                var errorKey = response.statusCode === 404 ? "404-country" : response.statusCode.toString();
-                this.setState(prevState => ({
-                    countriesMap: prevState.countriesMap,
-                    categoriesMap: {},
-                    country: event.target.value,
-                    category: "",
-                    playlists: [],
-                    error: (errorKey in errors) ? errors[errorKey] : errors["unknown"]
-                }))
+                if (response === undefined) {
+                    this.setState(prevState => ({
+                        countriesMap: prevState.countriesMap,
+                        categoriesMap: {},
+                        country: event.target.value,
+                        category: "",
+                        playlists: [],
+                        error: errors["server-down"]
+                    }))
+                } else {
+                    var errorKey = response.statusCode === 404 ? "404-country" : response.statusCode.toString();
+                    this.setState(prevState => ({
+                        countriesMap: prevState.countriesMap,
+                        categoriesMap: {},
+                        country: event.target.value,
+                        category: "",
+                        playlists: [],
+                        error: (errorKey in errors) ? errors[errorKey] : errors["unknown"]
+                    }));
+                }
             }
         });
     }
@@ -154,15 +166,26 @@ class PlaylistForm extends Component {
                     error: ""
                 }));
             } else {
-                var errorKey = response.statusCode === 404 ? "404-category" : response.statusCode.toString();
-                this.setState(prevState => ({
-                    countriesMap: prevState.countriesMap,
-                    categoriesMap: prevState.categoriesMap,
-                    country: prevState.country,
-                    category: prevState.category,
-                    playlists: [],
-                    error: (errorKey in errors) ? errors[errorKey] : errors["unknown"]
-                }))
+                if (response === undefined) {
+                    this.setState(prevState => ({
+                        countriesMap: prevState.countriesMap,
+                        categoriesMap: {},
+                        country: event.target.value,
+                        category: "",
+                        playlists: [],
+                        error: errors["server-down"]
+                    }))
+                } else {
+                    var errorKey = response.statusCode === 404 ? "404-category" : response.statusCode.toString();
+                    this.setState(prevState => ({
+                        countriesMap: prevState.countriesMap,
+                        categoriesMap: prevState.categoriesMap,
+                        country: prevState.country,
+                        category: prevState.category,
+                        playlists: [],
+                        error: (errorKey in errors) ? errors[errorKey] : errors["unknown"]
+                    }))
+                }
             }
         });
     }
