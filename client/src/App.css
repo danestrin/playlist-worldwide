@@ -32,6 +32,16 @@ h1 {
   margin: auto;
 }
 
+.SpinnerWrapper {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 25px;
+}
+
+.Spinner {
+  color: #66ccff;
+}
+
 .Select {
   padding-bottom: 25px;
 }

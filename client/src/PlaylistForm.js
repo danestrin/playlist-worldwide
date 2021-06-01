@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { Form, Button, Container, Col, Row, Alert, } from 'react-bootstrap';
+import { Form, Button, Container, Col, Row, Alert, Spinner, } from 'react-bootstrap';
 import PlaylistDisplay from './PlaylistDisplay';
 
 const request = require('request');
@@ -16,8 +16,9 @@ const errors = {
     "401": "Had trouble reaching Spotify data - please try again.",
     "404-country": "Couldn't find Spotify data for the selected country - please try another one.",
     "404-category": "Couldn't find Spotify data for the selected category - please try another one.",
+    "server-down": "Could not connect to the Playlist Worldwide server.",
+    "no-data": "Had trouble loading playlists - please try again.",
     "unknown": "Not sure what went wrong.",
-    "server-down": "Could not connect to Playlist Worldwide server."
 }
 
 class PlaylistForm extends Component {
@@ -29,7 +30,8 @@ class PlaylistForm extends Component {
             country: "",
             category: "",
             playlists: [],
-            error: ""
+            error: "",
+            loading: false
         }
     }
 
@@ -41,8 +43,14 @@ class PlaylistForm extends Component {
                         this.state.error !== "" &&
                         <Alert key="error" variant="danger"> 
                             <Alert.Heading style={{ fontFamily: 'Noto Sans JP' }}>Sorry about that!</Alert.Heading>
-                            <p style={{ fontFamily: 'Noto Sans' }}>{this.state.error}</p>
+                            <p style={{ fontFamily: 'Noto Sans JP' }}>{this.state.error}</p>
                         </Alert>
+                    }
+                    {
+                        this.state.loading &&
+                        <div className="SpinnerWrapper">
+                            <Spinner className="Spinner" animation="border"/>
+                        </div>
                     }
                     <Form.Group className="Select" value={this.state.country} onChange={(e) => this.fetchMusicCategoriesForCountry(e)}>
                         <Form.Control className="Select" as="select" defaultValue="">
@@ -93,6 +101,16 @@ class PlaylistForm extends Component {
             url: host + ":" + port + "/api/categories?country=" + event.target.value
         };
 
+        this.setState(prevState => ({
+            countriesMap: prevState.countriesMap,
+            categoriesMap: prevState.categoriesMap,
+            country: prevState.country,
+            category: prevState.category,
+            playlists: prevState.playlists,
+            error: "",
+            loading: true
+        }));
+
         request.get(options, (error, response, body) => {
             if (!error && response.statusCode === 200) {
                 var data = JSON.parse(body);
@@ -102,7 +120,8 @@ class PlaylistForm extends Component {
                     country: event.target.value,
                     category: Object.keys(data.categories)[0],
                     playlists: prevState.playlists,
-                    error: ""
+                    error: "",
+                    loading: false
                 }));
             } else {
                 if (response === undefined) {
@@ -112,7 +131,8 @@ class PlaylistForm extends Component {
                         country: event.target.value,
                         category: "",
                         playlists: [],
-                        error: errors["server-down"]
+                        error: errors["server-down"],
+                        loading: false
                     }))
                 } else {
                     var errorKey = response.statusCode === 404 ? "404-country" : response.statusCode.toString();
@@ -122,7 +142,8 @@ class PlaylistForm extends Component {
                         country: event.target.value,
                         category: "",
                         playlists: [],
-                        error: (errorKey in errors) ? errors[errorKey] : errors["unknown"]
+                        error: (errorKey in errors) ? errors[errorKey] : errors["unknown"],
+                        loading: false
                     }));
                 }
             }
@@ -136,7 +157,8 @@ class PlaylistForm extends Component {
             country: prevState.country,
             category: event.target.value,
             playlists: prevState.playlists,
-            error: ""
+            error: "",
+            loading: false
         }));
     }
 
@@ -144,6 +166,16 @@ class PlaylistForm extends Component {
         var options = {
             url: host + ":" + port + "/api/playlists?category=" + this.state.category + "&country=" + this.state.country + "&limit=" + limit
         };
+
+        this.setState(prevState => ({
+            countriesMap: prevState.countriesMap,
+            categoriesMap: prevState.categoriesMap,
+            country: prevState.country,
+            category: prevState.category,
+            playlists: prevState.playlists,
+            error: "",
+            loading: true
+        }));
 
         request.get(options, (error, response, body) => {
             if (!error && response.statusCode === 200) {
@@ -157,14 +189,28 @@ class PlaylistForm extends Component {
                     };
                 });
 
-                this.setState(prevState => ({
-                    countriesMap: prevState.countriesMap,
-                    categoriesMap: prevState.categoriesMap,
-                    country: prevState.country,
-                    category: prevState.category,
-                    playlists: playlists,
-                    error: ""
-                }));
+                // noticed a weird issue where sometimes a request would return an empty body, refreshing usually fixes it
+                if (playlists.length === 0) {
+                    this.setState(prevState => ({
+                        countriesMap: prevState.countriesMap,
+                        categoriesMap: prevState.categoriesMap,
+                        country: prevState.country,
+                        category: prevState.category,
+                        playlists: playlists,
+                        error: errors["no-data"],
+                        loading: false
+                    }));
+                } else {
+                    this.setState(prevState => ({
+                        countriesMap: prevState.countriesMap,
+                        categoriesMap: prevState.categoriesMap,
+                        country: prevState.country,
+                        category: prevState.category,
+                        playlists: playlists,
+                        error: "",
+                        loading: false
+                    }));
+                }
             } else {
                 if (response === undefined) {
                     this.setState(prevState => ({
@@ -173,7 +219,8 @@ class PlaylistForm extends Component {
                         country: event.target.value,
                         category: "",
                         playlists: [],
-                        error: errors["server-down"]
+                        error: errors["server-down"],
+                        loading: false
                     }))
                 } else {
                     var errorKey = response.statusCode === 404 ? "404-category" : response.statusCode.toString();
@@ -183,7 +230,8 @@ class PlaylistForm extends Component {
                         country: prevState.country,
                         category: prevState.category,
                         playlists: [],
-                        error: (errorKey in errors) ? errors[errorKey] : errors["unknown"]
+                        error: (errorKey in errors) ? errors[errorKey] : errors["unknown"],
+                        loading: false
                     }))
                 }
             }
