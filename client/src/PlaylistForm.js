@@ -6,8 +6,7 @@ const request = require('request');
 const countries = require("i18n-iso-countries");
 countries.registerLocale(require("i18n-iso-countries/langs/en.json"));
 
-const host = process.env.REACT_APP_API_HOST;
-const port = process.env.REACT_APP_API_PORT;
+const api_url = process.env.REACT_APP_API_URL;
 
 const limit = 12;
 
@@ -98,7 +97,7 @@ class PlaylistForm extends Component {
 
     fetchMusicCategoriesForCountry(event) {
         var options = {
-            url: host + ":" + port + "/api/categories?country=" + event.target.value
+            url: api_url + "/api/categories?country=" + event.target.value
         };
 
         this.setState(prevState => ({
@@ -164,7 +163,7 @@ class PlaylistForm extends Component {
 
     fetchPlaylists(event) {
         var options = {
-            url: host + ":" + port + "/api/playlists?category=" + this.state.category + "&country=" + this.state.country + "&limit=" + limit
+            url: api_url + "/api/playlists?category=" + this.state.category + "&country=" + this.state.country + "&limit=" + limit
         };
 
         this.setState(prevState => ({
