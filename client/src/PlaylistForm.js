@@ -6,8 +6,8 @@ const request = require('request');
 const countries = require("i18n-iso-countries");
 countries.registerLocale(require("i18n-iso-countries/langs/en.json"));
 
-const host = process.env.REACT_APP_API_HOST
-const port = process.env.REACT_APP_API_PORT
+const host = process.env.REACT_APP_API_HOST;
+const port = process.env.REACT_APP_API_PORT;
 
 const limit = 12;
 
