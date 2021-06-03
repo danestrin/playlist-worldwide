@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const request = require("request");
+const path = require("path");
 const cors = require("cors");
 const PORT = process.env.PORT || 3001;
 const server = express();
@@ -25,6 +26,8 @@ var authOptions = {
 };
 
 requestSpotifyToken();
+
+server.use(express.static(path.resolve(__dirname, '../client/build')));
 
 // ROUTES
 
@@ -97,6 +100,11 @@ server.get('/api/playlists', cors(), (req, res) => {
       });
     }
   });
+})
+
+// Client
+server.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
 })
 
 server.listen(PORT, () => {

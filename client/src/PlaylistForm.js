@@ -53,7 +53,7 @@ class PlaylistForm extends Component {
                         </div>
                     }
                     <Form.Group className="Select" value={this.state.country} onChange={(e) => this.fetchMusicCategoriesForCountry(e)}>
-                        <Form.Control className="Select" as="select" defaultValue="">
+                        <Form.Control as="select" defaultValue="">
                             <option disabled value="">Select a country...</option>
                             {
                                 Object.keys(this.state.countriesMap).map((k, i) => {
@@ -65,7 +65,7 @@ class PlaylistForm extends Component {
                     {
                         <div className={((this.isCountrySelected() && this.isCategorySelected()) ? "FadeIn" : "Hidden")}>
                             <Form.Group className="Select">
-                                <Form.Control className="Select" as="select" value={this.state.category} onChange={(e) => this.updateCategory(e)}>
+                                <Form.Control as="select" value={this.state.category} onChange={(e) => this.updateCategory(e)}>
                                     {
                                         Object.keys(this.state.categoriesMap).map((k, i) => {
                                             return (<option value={k} key={k}>{this.state.categoriesMap[k]}</option>)
