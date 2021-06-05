@@ -13,5 +13,5 @@ Playlist Worldwide is a web application that allow users to find official intern
 
 ## Known issues & possible extensions
 - All the data is provided directly via Spotify's Dev API. Not all playlists returned per country will be exclusive to that country or that country's language - some countries will return playlists belonging to other countries - some might even exlusively return English playlists. I tried to mitigate this as much as possible by returning multiple playlists, so that there will be a variety of different language playlists returned.
-- The website works on mobile, but the formatting/CSS is off compared to the non-mobile web version that the app was intended for - I'll potentially look into extending the app to have proper formatting on mobile browsers as well.
+- The website works on mobile, but the formatting/CSS is off compared to the non-mobile web version that the app was intended for - I'll potentially look into extending the app to have proper formatting on mobile browsers as well. (Workaround: Enabling "Desktop site" setting on mobile fixes the formatting on mobile)
 - I did my best to handle any sort of error requests that may arise in the UI (country not having Spotify support, possible authorization expiration, etc) but please let me know in the issues if I missed any!
